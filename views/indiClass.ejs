@@ -1,0 +1,63 @@
+<div class="row">
+    
+    {{ data? null : "No data" }}
+    
+    <div class="row table-responsive" ng-show="data">
+        
+        <table class="table table-hover table-bordered">
+            <tbody>
+                <tr class="text-center">
+                    <th>Building</th>
+                    <td ng-bind="data[0].class.building"></td>
+                </tr>
+                <tr class="text-center">
+                    <th>Room</th>
+                    <td ng-bind="data[0].class.room"></td>
+                </tr>
+                <tr class="text-center">
+                    <th>Capacity</th>
+                    <td ng-bind="data[0].class.capacity"></td>
+                </tr>
+            </tbody>
+        </table>
+        
+    </div>
+    
+    <div class="row table-responsive" ng-repeat="val in data">
+        
+        <table class="table table-hover table-bordered">
+            <tbody>
+                
+                <tr class="text-center">
+                    <th>Date</th>
+                    <td ng-bind="val.date | date : 'medium'"></td>
+                </tr>
+                <tr class="text-center" ng-repeat="(key, value) in val.schedule">
+                    <th ng-bind="key"></th>
+                    <td ng-bind="value"></td>
+                </tr>
+                <tr>
+                    <th class="text-center" colspan="2">Bookings</th>
+                </tr>
+                <tr class="text-center" ng-repeat-start="value in val.bookings">
+                    <th>Username</th>
+                    <td ng-bind="value.user.username"></td>
+                </tr>
+                <tr class="text-center">
+                    <th>Purpose</th>
+                    <td ng-bind="value.purpose"></td>
+                </tr>
+                <tr class="text-center">
+                    <th>Slot</th>
+                    <td ng-bind="value.slot"></td>
+                </tr>
+                <tr class="text-center" ng-repeat-end>
+                    <th>Priority</th>
+                    <td ng-bind="value.user.priority"></td>
+                </tr>
+            </tbody>            
+        </table>
+        
+    </div>
+    
+</div>

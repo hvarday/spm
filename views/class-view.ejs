@@ -1,0 +1,101 @@
+<html ng-app="app">
+    <head>
+        <title>View Class | FCLS</title>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.js"></script>
+        <style>
+            h1{
+                font-size: -webkit-xxx-large;
+            }
+        </style>
+
+    </head>
+    <body>
+        
+        <div class="container">
+            
+            <div class="col-sm-8 col-sm-offset-2">
+                
+                <div class="row">
+
+                    <div class="col-sm-12">
+
+                        <h1 class="text-center page-header">
+                            View Class
+                        </h1>
+
+                    </div>
+                    <div class="col-sm-12">
+                        <a href="#list" class="btn btn-info">List</a>
+                    </div>
+
+                </div>
+
+                <div ng-view></div>
+                
+                
+
+            </div>
+        
+            
+        </div>
+        <script>
+        angular.module("app", ["ngRoute"])
+        .config(function($routeProvider) {
+            $routeProvider
+                .when("/list", {
+                    template : `<div class="row">
+                                    <div class="list-group">
+                                        <a href="{{'#'+class._id}}" class="list-group-item" ng-repeat="class in classes" ng-bind="class.building+' '+class.room"></a>
+                                    </div>
+
+                                </div>`,
+                    controller : 'cont'
+                })
+                .when("/:id", {
+                    template : `<% include ../views/indiClass.ejs %>`,
+                    controller : 'indiClass'
+                });
+        })
+
+        .controller('cont', ["$scope", "$http", function($scope, $http){
+            $scope.init = function(){
+                console.log("Warming up");
+                $http.get("/class/list")
+                .then(function(res){
+                    console.log(res);
+                    $scope.classes = res.data;
+                }, function(res){
+                    console.error(res);
+                })
+            }
+            
+            $scope.init();
+        }])
+        .controller('indiClass', ["$scope", "$http", "$window", "$route", "$routeParams", "$q", function($scope, $http, $window, $route, $routeParams, $q){
+            
+            $scope.init = function(){
+                $http.get("/class/schedule/"+$routeParams.id)
+                .then(function(res){
+                    console.log(res);
+                    $scope.data = res.data;
+                    $scope.data.forEach(function(e, i){
+                        delete($scope.data[i].schedule._id);
+                    })
+                }, function(res){
+                    console.error(res);
+                })
+            }
+            
+            $scope.init();
+        }])
+        
+        </script>
+    </body>
+</html>

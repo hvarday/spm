@@ -1,0 +1,124 @@
+<html ng-app="app">
+    <head>
+        <title>Book Class | FCLS</title>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-route.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+        <style>
+            h1{
+                font-size: -webkit-xxx-large;
+            }
+        </style>
+
+    </head>
+    <body>
+        
+        <div class="container">
+            
+            <div class="col-sm-8 col-sm-offset-2">
+                
+                <div class="row">
+
+                    <div class="col-sm-12">
+
+                        <h1 class="text-center page-header">
+                            Book Class
+                        </h1>
+
+                    </div>
+                    <div class="col-sm-12">
+                        <a href="#list" class="btn btn-info">List</a>
+                    </div>
+
+                </div>
+
+                <div ng-view></div>
+                
+                
+
+            </div>
+        
+            
+        </div>
+        <script>
+        angular.module("app", ["ngRoute"])
+        .config(function($routeProvider) {
+            $routeProvider
+                .when("/list", {
+                    template : `<div class="row">
+                                    <div class="list-group">
+                                        <a href="{{'#'+class._id}}" class="list-group-item" ng-repeat="class in classes" ng-bind="class.building+' '+class.room"></a>
+                                    </div>
+
+                                </div>`,
+                    controller : 'cont'
+                })
+                .when("/:id", {
+                    template : `<% include ../views/indiBook.ejs %>`,
+                    controller : 'indiClass'
+                });
+        })
+
+        .controller('cont', ["$scope", "$http", function($scope, $http){
+            $scope.init = function(){
+                console.log("Warming up");
+                $http.get("/class/list")
+                .then(function(res){
+                    console.log(res);
+                    $scope.classes = res.data;
+                }, function(res){
+                    console.error(res);
+                })
+            }
+            
+            $scope.init();
+        }])
+        .controller('indiClass', ["$scope", "$http", "$window", "$route", "$routeParams", "$q", function($scope, $http, $window, $route, $routeParams, $q){
+            
+            $scope.slots = ["8 - 9", "9 - 10", "10 - 11", "11 - 12", "12 - 13", "13 - 14", "14 - 15", "15 - 16", "16 - 17", "17 - 18", "18 - 19"];
+            $scope.slot = $scope.slots[0];
+            
+            $scope.date = new Date();
+            $scope.purpose = "Meeting"
+            
+            $scope.init = function(){
+                $http.get("/class/"+$routeParams.id)
+                .then(function(res){
+                    console.log(res);
+                    $scope.data = res.data;
+                }, function(res){
+                    console.error(res);
+                })
+            }
+            
+            $scope.init();
+            
+            $scope.book = function(){
+                toastr.info("Booking in progress");
+                var temp = {
+                    slot : $scope.slot,
+                    date : $scope.date,
+                    purpose : $scope.purpose,
+                    class : $routeParams.id
+                }
+                $http.post($window.location.pathname, temp)
+                .then(function(res){
+                    toastr.success("Booked successfully");
+                    console.log(res);
+                }, function(res){
+                    toastr.error("Please try again later");
+                    console.error(res);
+                })
+            }
+        }])
+        
+        </script>
+    </body>
+</html>
