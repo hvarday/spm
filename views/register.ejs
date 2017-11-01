@@ -1,0 +1,193 @@
+<html ng-app="app">
+	<head>
+		<title>Register</title>
+		<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js" integrity="sha256-3blsJd4Hli/7wCQ+bmgXfOdK7p/ZUMtPXY08jmxSSgk=" crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" integrity="sha256-ENFZrbVzylNbgnXx0n3I1g//2WeO47XxoPe0vkp3NC8=" crossorigin="anonymous" />
+		<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <style>
+            h1{
+                font-size: -webkit-xxx-large;
+            }
+        </style>
+    </head>
+	<body ng-controller="cont">
+
+        <div class="container">
+            
+            <div class="row">
+                
+                <div class="page-header text-center">
+                    <h1>Hostel Room Allocation</h1>
+                </div>
+                
+            </div>
+			<br>
+			<br>
+			<br>
+            <div class="row">
+
+				<div class="col-sm-6">
+					
+					<div class="form-group form-inline">
+						<label for="email">Name:</label>
+						<input readonly type="text" class="form-control" value="{{data.name}}">
+					</div>
+
+					<div class="form-group form-inline">
+						<label for="email">Branch:</label>
+						<input readonly type="text" class="form-control" value="{{data.branch}}">
+					</div>
+
+					<div class="form-group form-inline">
+						<label for="email">Status:</label>
+						<input readonly type="text" class="form-control" value="{{data.status}}">
+					</div>
+					
+				</div>
+				<div class="col-sm-6">
+					
+					<div class="form-group form-inline">
+						<label for="email">CGPA:</label>
+						<input readonly type="text" class="form-control" value="{{data.cgpa}}">
+					</div>
+
+					<div class="form-group form-inline">
+						<label for="email">Registration Number:</label>
+						<input readonly type="text" class="form-control" value="{{data.username}}">
+					</div>
+
+				</div>
+			</div>
+		<br>
+		<br>
+		<br>
+			<div class="row">
+				
+		
+				<div class="col-sm-6 col-sm-offset-3">
+					
+					<div class="form-group form-inline">
+						<label class="control-label">Reg No. 1</label>
+						<input class="form-control" type='text' ng-model='data.username' readonly required='true'/> <br><br>
+					</div>
+				
+				</div>
+
+				<form ng-submit="registerRoom()">
+
+					<div class="col-sm-6">
+						
+						<div class="form-group form-inline">
+							<label class="control-label">Reg No. 2</label>
+							<input class="form-control" type='text' ng-model='reg2' required='true'/> <br><br>
+						</div>
+
+					</div>
+					<div class="col-sm-6">
+
+						<div class="form-group form-inline">
+							<label class="control-label">Reg No. 3</label>
+							<input class="form-control" type='text' ng-model='reg3' required='true'/> <br><br>
+						</div>
+
+					</div>
+					
+					<div class="col-sm-3 col-sm-offset-4">
+
+						<div class="form-group form-inline">
+							<label class="control-label">Room</label>
+							<select class="form-control" ng-options="room as room.name for room in rooms track by room._id" ng-model="selected" required="true"></select>	
+						</div>
+					</div>
+
+					<input class="btn btn-success" type="submit" name="Submit">
+
+				</form>
+			</div>
+		</div>
+		
+		<script>
+		
+			angular.module('app', [])
+			.controller('cont', ["$scope", "$http", "$q", function($scope, $http, $q){
+				
+				$http.post("/home")
+				.then((resp)=>{
+					$scope.data = resp.data;
+					if(resp.data.status){
+						toastr.info("Room already alloted");
+						setTimeout(()=>{
+							window.location.pathname = "/home";
+						}, 1000)
+					}
+				}, (resp)=>{
+					console.error(resp);
+				})
+				
+				$http.get("/register/data")
+				.then((resp)=>{
+					$scope.rooms = resp.data;
+				}, (resp)=>{
+					console.error(resp);
+				})
+				
+				$scope.registerRoom = ()=>{
+					
+					if(!$scope.selected)
+						return toastr.error("Please select a room, and try again");
+					
+					$q.all([$scope.checkNum($scope.reg2), $scope.checkNum($scope.reg3), $scope.checkStatus($scope.reg2), $scope.checkStatus($scope.reg3)])
+					.then(()=>{
+						return $http.post('/register', {reg1 : $scope.data.username, reg2 : $scope.reg2, reg3 : $scope.reg3, room : $scope.selected._id })
+					})
+					.then((resp)=>{
+						console.log(resp.data);
+						toastr.success("Room Successfully Alloted");
+						window.location.reload();
+					}, (resp)=>{
+						console.error(resp.data);
+					})
+					.catch((err)=>{
+						console.error(err)
+					})
+					
+				}
+				
+				$scope.checkNum = (regNum)=>{
+					
+					return $http.get('/register/checkRegNum', {	params	: { regNum : regNum } })
+					.then((resp)=>{
+						return $q.resolve();						  
+					}, (resp)=>{
+						if(resp.status===404)
+							toastr.error("Please try again", `Registration number - ${regNum} was not found.`)
+						return $q.reject();
+					})
+					
+				}
+				
+				$scope.checkStatus = (regNum)=>{
+					
+					return $http.get('/register/checkStatus', {	params	: { regNum : regNum } })
+					.then((resp)=>{
+						return $q.resolve();						  
+					}, (resp)=>{
+						if(resp.status===409)
+							toastr.error("Please try again", `Registration number - ${regNum} already has a registration.`)
+						return $q.reject();
+					})
+					
+				}
+			
+			}])
+		</script>
+	</body>
+</html>

@@ -1,0 +1,94 @@
+<html ng-app="app">
+	<head>
+		<title>Home</title>
+		<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <!-- Latest compiled JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <style>
+            h1{
+                font-size: -webkit-xxx-large;
+            }
+        </style>
+    </head>
+	<body ng-controller="cont">
+
+        <div class="container">
+            
+            <div class="row">
+                
+                <div class="page-header text-center">
+                    <h1>Hostel Room Allocation</h1>
+                </div>
+                
+            </div>
+			<br>
+			<br>
+			<br>
+            <div class="row">
+
+				<div class="col-sm-6">
+					
+					<div class="form-group form-inline">
+						<label for="email">Name:</label>
+						<input readonly type="text" class="form-control" value="{{data.name}}">
+					</div>
+
+					<div class="form-group form-inline">
+						<label for="email">Branch:</label>
+						<input readonly type="text" class="form-control" value="{{data.branch}}">
+					</div>
+
+					<div class="form-group form-inline">
+						<label for="email">Status:</label>
+						<input readonly type="text" class="form-control" value="{{data.status}}">
+					</div>
+					
+				</div>
+				<div class="col-sm-6">
+					
+					<div class="form-group form-inline">
+						<label for="email">CGPA:</label>
+						<input readonly type="text" class="form-control" value="{{data.cgpa}}">
+					</div>
+
+					<div class="form-group form-inline">
+						<label for="email">Registration Number:</label>
+						<input readonly type="text" class="form-control" value="{{data.username}}">
+					</div>
+
+					<div class="form-group form-inline" ng-if="data.status">
+						<label for="email">Room:</label>
+						<input readonly type="text" class="form-control" value="{{data.room}}">
+					</div>
+
+				</div>
+			</div>
+			<div class="row" ng-if="!data.status">
+				
+				<div class="col-sm-6 col-sm-offset-4">
+					
+					<a class="btn btn-info" href="/register">Register Room</a>
+
+				</div>
+
+			</div>
+		</div>
+		<script>
+		
+			angular.module('app', [])
+			.controller('cont', ["$scope", "$http", function($scope, $http){
+				
+				$http.post(window.location.pathname)
+				.then((resp)=>{
+					$scope.data = resp.data;
+				}, (resp)=>{
+					console.error(resp);
+				})
+			}])
+		</script>
+	</body>
+</html>

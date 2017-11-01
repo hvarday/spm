@@ -8,7 +8,8 @@ var express = require('express'),
     passport = require('passport'),
     Promise = require('bluebird'),
     flash = require('connect-flash'),
-    bodyParser = require('body-parser');
+    bodyParser = require('body-parser'),
+    seedDB = require('./util/seedDB');
 
 dotenv.load();
 
@@ -16,10 +17,11 @@ require(path.join(__dirname, 'util', 'strat'))(passport);
 mongoose.promise = Promise;
 mongoose.connect(process.env.MONGO_URI);
 
+seedDB();
+
 var index = require('./routes/index'),
-    login = require('./routes/login'),
-    classRoute = require('./routes/class');
-//     users = require('./routes/users');
+    login = require('./routes/login')
+    register = require('./routes/register');
 
 var app = express();
 
@@ -50,10 +52,9 @@ app.use(require('cookie-session')({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/', index);
-// app.use('/users', users);
 app.use('/login', login);
-app.use('/class', classRoute);
+app.use('/', index);
+app.use('/register', register);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

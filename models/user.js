@@ -7,8 +7,11 @@ var user = mongoose.Schema({
 
     username : { type : String, required : true, unique : true },
     password : { type : String, required : true },
-    priority : { type : Number, requried : true, default : 1 }
-
+    name : { type : String, required : true },
+    branch : { type : String, required : true   },
+    cgpa : { type : Number, required : true },
+    status : { type : Boolean, required : true, default : false },
+    room : { type : String }
 })
 
 user.pre('save', function (next) {
@@ -57,5 +60,24 @@ user.pre('update', function (next) {
 user.methods.verifyPassword = function (pass) {
     return bcrypt.compareAsync(pass, this.password);
 };
+
+// user.post('find', function(doc, next) {
+//     var modelData;
+//     if(!doc.status) return next();
+    
+//     registrationModel.find({$or : [{ reg1 : doc.username }, { reg2 : doc.username }, { reg3 : doc.username }]})
+//     .then((data)=>{
+//         modelData.room = data.room;
+//         next();
+//     })
+//     .catch(next);
+    
+// });
+
+// user.virtual('room', {
+//   ref: 'BlogPost',
+//   localField: '_id',
+//   foreignField: 'author'
+// });
 
 module.exports = mongoose.model("user", user);
