@@ -68,7 +68,10 @@ router.route('/checkStatus')
 router.route('/data')
 .get((req, res, next)=>{
 	
-	roomModel.find()
+	registrationModel.distinct('room')
+	.then((rooms)=>{
+		return	roomModel.find({_id : { $nin : rooms }})
+	})
 	.then((doc)=>{
 		res.json(doc);
 	})

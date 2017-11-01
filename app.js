@@ -17,7 +17,7 @@ require(path.join(__dirname, 'util', 'strat'))(passport);
 mongoose.promise = Promise;
 mongoose.connect(process.env.MONGO_URI);
 
-seedDB();
+// seedDB();
 
 var index = require('./routes/index'),
     login = require('./routes/login')

@@ -194,17 +194,17 @@ rooms =[
 
 function seed(){
 	
-// rooms.forEach((e)=>{
-//     e.name = e.room;
-//     console.log(e.text);
-//     new roomModel(e).save().catch((err)=>{console.log(err)});
-// });
+rooms.forEach((e)=>{
+    e.name = e.room;
+    console.log(e.text);
+    new roomModel(e).save().catch((err)=>{console.log(err)});
+});
 
-// data.forEach((e)=>{
-//     e.username = e.regno;
-//     e.password = "pass";
-//     new userModel(e).save();
-// });
+data.forEach((e)=>{
+    e.username = e.regno;
+    e.password = "pass";
+    new userModel(e).save();
+});
 	
 }
 
