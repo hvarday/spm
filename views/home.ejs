@@ -21,7 +21,7 @@
             <div class="row">
                 
                 <div class="page-header text-center">
-                    <h1>Hostel Room Allocation</h1>
+                    <h1>Hostel Room Allocation</h1><a class="btn btn-danger btn-sm" href="/logout">Logout</a>
                 </div>
                 
             </div>
@@ -46,6 +46,11 @@
 						<label for="email">Status:</label>
 						<input readonly type="text" class="form-control" value="{{data.status}}">
 					</div>
+
+					<div class="form-group form-inline" ng-if="data.rank">
+						<label for="email">Rank:</label>
+						<input readonly type="text" class="form-control" value="{{data.rank}}">
+					</div>
 					
 				</div>
 				<div class="col-sm-6">
@@ -60,6 +65,17 @@
 						<input readonly type="text" class="form-control" value="{{data.username}}">
 					</div>
 
+					<div class="form-group form-inline" ng-if="data.rank">
+						<label for="email">Day:</label>
+						<input readonly type="text" class="form-control" value="{{data.day}}">
+					</div>
+
+					<div class="form-group form-inline" ng-if="data.rank">
+						<label for="email">Slot:</label>
+						<input readonly type="text" class="form-control" value="{{ data.slot }}">
+					</div>
+
+					
 					<div class="form-group form-inline" ng-if="data.status">
 						<label for="email">Room:</label>
 						<input readonly type="text" class="form-control" value="{{data.room}}">
@@ -85,6 +101,8 @@
 				$http.post(window.location.pathname)
 				.then((resp)=>{
 					$scope.data = resp.data;
+					$scope.data.day = $scope.data.rank <11 ? 1 : 2;
+					$scope.data.slot = $scope.data.rank+1 % 10 <= 5 ? 1 : 2;
 				}, (resp)=>{
 					console.error(resp);
 				})

@@ -11,12 +11,13 @@ var user = mongoose.Schema({
     branch : { type : String, required : true   },
     cgpa : { type : Number, required : true },
     status : { type : Boolean, required : true, default : false },
-    room : { type : String }
+    room : { type : String },
+    rank : { type : Number }
 })
 
 user.pre('save', function (next) {
     var doc = this;
-    console.log("WORKING To Hash");
+//     console.log(`WORKING To Hash ${this.password}`);
   // only hash the password if it has been modified (or is new)
     if (!doc.isModified('password')) return next();
 
